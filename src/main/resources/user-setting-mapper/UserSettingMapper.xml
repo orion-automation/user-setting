@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.eorion.bo.enhancement.usersetting.mapper.UserSettingMapper">
+
+    <insert id="saveUserSetting" useGeneratedKeys="true" keyProperty="id"
+            parameterType="com.eorion.bo.enhancement.usersetting.domain.dto.inbound.UserSettingSaveDTO">
+        INSERT INTO ENHANCEMENT_USER_SETTING (USER_ID, PREFERENCE_JSON)
+        VALUES (#{userId}, #{preferenceJson})
+    </insert>
+
+    <resultMap id="userSettingMap" type="com.eorion.bo.enhancement.usersetting.domain.entity.UserSetting">
+        <id column="ID" property="id" jdbcType="INTEGER"/>
+        <result column="USER_ID" property="userId" jdbcType="VARCHAR"/>
+        <result column="PREFERENCE_JSON" property="preferenceJson"
+                typeHandler="com.eorion.bo.enhancement.usersetting.domain.handler.JsonTypeHandler"/>
+    </resultMap>
+
+    <select id="selectOneByUserId" resultMap="userSettingMap">
+        select *
+        from ENHANCEMENT_USER_SETTING
+        where USER_ID = #{userId}
+    </select>
+
+    <update id="updateByUserId"
+            parameterType="com.eorion.bo.enhancement.usersetting.domain.dto.inbound.UserSettingSaveDTO">
+        UPDATE ENHANCEMENT_USER_SETTING
+        SET PREFERENCE_JSON = #{preferenceJson}
+        WHERE USER_ID = #{userId}
+    </update>
+</mapper>

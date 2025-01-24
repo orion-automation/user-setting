@@ -1,0 +1,11 @@
+-- liquibase formatted sql
+
+-- changeset eorion:1 dbms:postgresql
+CREATE TABLE IF NOT EXISTS ENHANCEMENT_USER_SETTING
+(
+    ID  SERIAL  PRIMARY KEY,
+    USER_ID varchar(128) unique not null,
+    PREFERENCE_JSON varchar(2000) null
+);
+COMMENT ON COLUMN ENHANCEMENT_USER_SETTING.USER_ID IS '用户ID';
+COMMENT ON COLUMN ENHANCEMENT_USER_SETTING.PREFERENCE_JSON IS '用户偏好设置';
