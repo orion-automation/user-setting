@@ -7,6 +7,7 @@ import org.camunda.bpm.engine.IdentityService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpHeaders;
@@ -15,7 +16,6 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
-import java.io.IOException;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.sql.SQLException;
@@ -36,7 +36,9 @@ public class UserSettingControllerTest {
 
     }
 
-    private final InputStreamReader userSettingDeleteReader = new InputStreamReader(Objects.requireNonNull(this.getClass().getClassLoader().getResourceAsStream("sql/delete-all.sql")));
+    @Value("${spring.profiles.active:default}") // "default" if no profile is set
+    private String activeProfile;
+
     @Autowired
     private MockMvc mockMvc;
     @Autowired
@@ -46,9 +48,16 @@ public class UserSettingControllerTest {
     @Autowired
     private UserSettingService service;
 
+    private InputStreamReader getUserSettingDeleteReader() {
+        if (activeProfile.equals("testcontainers")) {
+            return new InputStreamReader(Objects.requireNonNull(this.getClass().getClassLoader().getResourceAsStream("sql/delete-all.oracle.sql")));
+        }
+        return new InputStreamReader(Objects.requireNonNull(this.getClass().getClassLoader().getResourceAsStream("sql/delete-all.sql")));
+    }
+
     @BeforeEach
     public void clearUp() throws SQLException {
-        executor.batchExecuteSqlFromFile(userSettingDeleteReader);
+        executor.batchExecuteSqlFromFile(getUserSettingDeleteReader());
         identityService.setAuthenticatedUserId("demo");
     }
 
@@ -58,7 +67,8 @@ public class UserSettingControllerTest {
                         MockMvcRequestBuilders.post("/enhancement/user-setting")
                                 .headers(headers)
                                 .contentType(MediaType.APPLICATION_JSON)
-                                .content("{\"userId\": \"test1\",\"preferenceJson\": {\"test1\": \"1\",\"test2\": \"3\",\"test3\": \"test\"}}")
+                                .content("""
+{"userId": "test1","preferenceJson": {"test1": "1","test2": "3","test3": "test"}}""")
                 )
                 .andExpect(MockMvcResultMatchers.status().isOk());
 
@@ -66,7 +76,8 @@ public class UserSettingControllerTest {
                         MockMvcRequestBuilders.post("/enhancement/user-setting")
                                 .headers(headers)
                                 .contentType(MediaType.APPLICATION_JSON)
-                                .content("{\"userId\": \"test1\",\"preferenceJson\": {\"test1\": \"1\",\"test2\": \"3\",\"test3\": \"test\"}}")
+                                .content("""
+{"userId": "test1","preferenceJson": {"test1": "1","test2": "3","test3": "test"}}""")
                 )
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.id").value(1));

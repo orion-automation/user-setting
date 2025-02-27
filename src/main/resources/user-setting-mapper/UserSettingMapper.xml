@@ -2,10 +2,13 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.eorion.bo.enhancement.usersetting.mapper.UserSettingMapper">
 
-    <insert id="saveUserSetting" useGeneratedKeys="true" keyProperty="id"
+    <insert id="saveUserSetting" flushCache="false"
             parameterType="com.eorion.bo.enhancement.usersetting.domain.dto.inbound.UserSettingSaveDTO">
         INSERT INTO ENHANCEMENT_USER_SETTING (USER_ID, PREFERENCE_JSON)
         VALUES (#{userId}, #{preferenceJson})
+        <selectKey resultType="java.lang.Integer" keyProperty="id" order="AFTER">
+            select id from ENHANCEMENT_USER_SETTING where USER_ID=#{userId}
+        </selectKey>
     </insert>
 
     <resultMap id="userSettingMap" type="com.eorion.bo.enhancement.usersetting.domain.entity.UserSetting">
