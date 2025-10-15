@@ -10,7 +10,7 @@
     </parent>
     <groupId>com.eorion.bo.enhancement</groupId>
     <artifactId>user-setting</artifactId>
-    <version>0.2.0</version>
+    <version>0.3.0</version>
     <name>user setting features</name>
     <description>A spring boot starter of user setting features for Camunda Platform 7</description>
     <url>https://github.com/orion-automation/user-setting</url>
