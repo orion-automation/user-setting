@@ -8,7 +8,6 @@ import com.eorion.bo.enhancement.usersetting.domain.dto.outbound.UserSettingDTO;
 import com.eorion.bo.enhancement.usersetting.domain.entity.UserSetting;
 import com.eorion.bo.enhancement.usersetting.domain.exception.InsertFailedException;
 import com.eorion.bo.enhancement.usersetting.domain.exception.UpdateFailedException;
-import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,10 +17,13 @@ import java.util.Objects;
 
 @Service
 @Slf4j
-@AllArgsConstructor
 public class UserSettingService {
 
     private final UserSettingRepository repository;
+
+    public UserSettingService(UserSettingRepository repository) {
+        this.repository = repository;
+    }
 
     public ResponseEntity<UserSettingDTO> getByUserId(String userId) {
         var userSetting = repository.getOne(new LambdaQueryWrapper<UserSetting>().eq(UserSetting::getUserId, userId));

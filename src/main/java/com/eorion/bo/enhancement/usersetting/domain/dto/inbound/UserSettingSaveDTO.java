@@ -2,6 +2,8 @@ package com.eorion.bo.enhancement.usersetting.domain.dto.inbound;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
 import lombok.Data;
 
 import java.util.Map;
@@ -10,7 +12,7 @@ import java.util.Map;
 public class UserSettingSaveDTO {
     private Integer id;
 
-    private String userId;
+    @NotBlank @Size(max = 128) private String userId;
 
     private Map<String, Object> preferenceJson;
 
